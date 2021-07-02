@@ -2,8 +2,7 @@
 ### 🔔 SELECT 쿼리문 실행시 순서   
       FROM -> WHERE -> GROUP BY -> HAVING -> SELECT -> ORDER BY  
       
-### 🔔 NVL 함수는 값이 null인 경우 지정값을 출력, NVL2 함수는 null이 아닌경우 지정값1을 출력하고,   
-###    null인 경우 지정값2를 출력 한다.  
+### 🔔 NVL 함수는 값이 null인 경우 지정값을 출력, NVL2 함수는 null이 아닌경우 지정값1을 출력하고, null인 경우 지정값2를 출력 한다.    
       NVL(NAME, 'NO name')
       NVL2(NAME, NAME, 'NO name')
 
