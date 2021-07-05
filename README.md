@@ -1,11 +1,6 @@
-# 🤓 SQL 레벨업!!  
-### 🔔 SELECT 쿼리문 실행시 순서   
-      FROM -> WHERE -> GROUP BY -> HAVING -> SELECT -> ORDER BY  
-      
-### 🔔 NVL 함수는 값이 null인 경우 지정값을 출력, NVL2 함수는 null이 아닌경우 지정값1을 출력하고, null인 경우 지정값2를 출력 한다.    
-      NVL(NAME, 'NO name')
-      NVL2(NAME, NAME, 'NO name')
-
+# 🤓 SQL 레벨업!!
+<details>
+  <summary>🔔 쿼리 연습</summary>
 <details>
   <summary>SELECT</summary>  
   
@@ -344,3 +339,245 @@
   📄 결과  
   ![image](https://user-images.githubusercontent.com/73812196/124224411-90489d80-db40-11eb-9178-95c8dd038caa.png)   
 </details>
+</details>  
+      
+## 🔔 SELECT 쿼리문 실행시 순서   
+      FROM -> WHERE -> GROUP BY -> HAVING -> SELECT -> ORDER BY  
+      
+## 🔔 NVL 함수는 값이 null인 경우 지정값을 출력, NVL2 함수는 null이 아닌경우 지정값1을 출력하고, null인 경우 지정값2를 출력 한다.    
+      NVL(NAME, 'NO name')
+      NVL2(NAME, NAME, 'NO name')  
+
+## 🔔 데이터베이스 객체  
+### 🚩 개요
+ - 테이블 : 데이터를 담고 있는 개체
+ - 뷰 : 하나 이상의 테이블을 연결해 마치 테이블인 것처럼 사용하는 객체
+ - 인덱스 : 테이블에 있는 데이터를 빠르게 찾기 위한 객체
+ - 시노님 : 데이터베이스 객체에 대한 별칭을 부여한 객체
+ - 시퀀스 : 일련번호 채번을 할 때 사용되는 객체
+ - 함수 : 특정 연산을 하고 값을 반환하는 객체
+ - 프로시저 : 함수와 비슷하지만 값을 반환하지는 않는 객체
+ - 패키지 : 용도에 맞게 함수나 프로시저를 하나로 묶어 놓은 객체  
+ 
+### 🚩 테이블
+ - 테이블 생성    
+   CREATE TABLE 테이블명 (    
+   컬럼1 데이터타입 [NULL, NOT NULL],    
+   컬럼2 데이터타입 [NULL, NOT NULL],    
+   ...      
+   );    
+   
+ - 데이터 타입    
+   1. CHAR : 고정길이, 최대 2000byte  
+   2. VARCHAR2 : 가변길이, 최대 4000byte, 저장 공간을 위해 CHAR보다는 VARCHAR2를 사용할 것  
+   3. NCHAR : 고정길이 유니코드 문자(다국어 입력 가능), 최대 2000vyte  
+   4. NVARCHAR2 : 가변길이 유니코드 문자(다국어 입력 가능), 최대 4000byte, 영어 한 문자 : 1byte, 한글 : 2byte  
+   5. NUMBER : 가변숫자, 최대 22byte
+   6. FLOAT : NUMBER의 하위 타입, 최대 22byte, 이진수 기준
+   7. BINARY_FLOAT : 32비트 부동소수점 수, 최대 4byte
+   8. BINARY_DOUBLE : 64비트 부동소수점 수, 최대 8byte  
+   9. DATE : 연,월,일,시,분,초까지 입력 가능  
+   10. TIMESTAMP : 밀리초까지 입력 가능  
+   11. CLOB :  문자형 대용량 객체, 고정길이와 가변길이 문자 집합 지원, 문자형 대용량 데이터 저장시    
+   12. NCLOB : 유니코드를 포함한 문자형 대용량 객체, 문자형 대용량 데이터 저장시    
+   13. BLOB : 이진형 대용량 객체, 그래픽, 이미지, 동영상 등  
+   14. BFILE : 대용량 이진 파일에 대한 로케이터(위치, 이름) 저장
+   
+ - 제약조건  
+   1. NOT NULL : NULL 허용하지 않음. 반드시 데이터를 입력해야 함
+   2. UNIQUE : 중복 허용하지 않음. UNIQUE 비교 대상에서 NULL은 제외됨
+   3. Primary key : 기본키(NOT NULL+UNIQUE), 테이블당 1개 생성 가능, 데이터 무결성을 실질적으로 구현한 것, 특수한 경우를 제외하고 기본키는 반드시 생성하는 것이 원칙
+   4. Foreign key : 외래키, 여러 컬럼을 외래키로 만드려면 참조하는 컬럼과 외래키 컬럼의 순서와 개수는 같아야 함
+   5. CHECK : 컬럼에 입력되는 데이터를 체크해 특정 조건에 맞는 데이터만 입력 받고 그렇지 않으면 오류를 뱉어 냄  
+   6. DEFAULT : 제약조건은 아니나 컬럼 속성 중 하나로 컬럼 속성에 자동으로 디폴트 값이 들어감  
+      ex) 테이블 생성시   
+          컬럼명 DATE DEFAULT SYSDATE  
+          INSERT INTO 테이블명(컬럼1, 컬럼2) VALUES ('AA', 'BB');  
+          결과:    
+          AA   BB   2021/07/05 10:12:10  
+          
+ - 테이블 삭제    
+   DROP TABLE 테이블명 [CASCADE CONSTRAINTS] : CASCADE CONSTRAINTS를 붙이면 기본키, 제약조건 등도 자동 삭제됨  
+   
+ - 테이블 변경  
+   ALTER TABLE 테이블명 RENAME COLUMN 변경전컬럼명 TO 변경후컬럼명;  
+   ALTER TABLE 테이블명 MODIFY 컬럼명 데이터타입;
+   ALTER TABLE 테이블명 ADD 컬럼명 데이터타입;
+   ALTER TABLE 테이블명 DROP COLUMN 컬럼명;
+   ALTER TABLE 테이블명 ADD CONSTRAINTS 제약조건명 PRIMARY KEY(컬럼명, ..);
+   ALTER TABLE 테이블명 DROP CONSTRAINS 제약조건명;  
+   
+ - 테이블 복사  
+   CREATE TABLE 테이블명 AS  
+   SELECT 컬럼1, 컬럼2, ...  
+   FROM 복사할 테이블명;  
+   
+### 🚩 뷰  
+ - 뷰 생성  
+   CREATE OR REPLACE VIEW 뷰명 AS
+   SELECT 문장;  
+   ex) CREATE OR REPLACE VIEW 뷰명 AS  
+       SELECT a.employee_id, a.emp_name, a.department_id, b.department_name  
+       FROM employee a, departments b  
+       WHERE a.department_id = b.department_id;  
+      
+ - 뷰 삭제  
+   DROP VIEW 뷰명;  
+      
+### 🚩 인덱스    
+ - 인덱스 생성 : UNIQUE 제약조건을 만들면 자동으로 UNIQUE 인덱스를 생성해 줌  
+   CREATE[UNIQUE] INDEX 인덱스명  
+   ON 테이블명(컬럼1, 컬럼2, ...);  
+      
+ - 일반적으로 테이블 전체 row 수의 15% 이하의 데이터를 조회할 때 인덱스 생성
+ - 테이블 건수가 적다면 굳이 만들 필요 없음
+ - 데이터의 유일성 정도가 좋거나 범위가 넓은 값을 가진 컬럼을 인덱스로 만드는 것이 좋음
+ - NULL이 많이 포함된 컬럼을 인덱스 컬럼으로 만들기 적당치 않음
+ - 결합 인덱스를 만들 때는 자주 사용되는 컬럼을 순서상 앞에 두는 것이 좋음
+ - 테이블에 만들 수 있는 인덱스 수의 제한은 없으나 너무 많이 만들면 부하가 발생함  
+      
+ - 인덱스 삭제  
+   DROP INDEX 인덱스명;  
+      
+### 🚩 시퀀스  
+ - 시퀀스 생성  
+   CREATE SEQUENCE 시퀀스명  
+   INCREMENT BY 증감숫자 : 0이 아닌 정수, 양수면 증가, 음수면 감소, 디폴트 1   
+   START WITH 시작숫자 : 디폴트 값은 증가일 때는 MINVALUE, 감소일 경우 MAXVALUE    
+   NOMINVALUE | MINVALUE 최소값 : 시작숫자보다 작거나 같아야 하고 MAXVALUE보다 작아야 함    
+   NOMAXVALUE | MAXVALUE 최대값 : 시작숫자보다 크거나 같아야 하고 MINVALUE보다 커야 함    
+   NOCYCLE | CYCLE : CYCLE: 증가는 퇴대값에 도달하면 다시 최소값부터 시작, 감소는 최소값에 도달하면 다시 최대 값에서 시작, NOCYCLE : 디폴트 값으로 최대나 최소값에 도달하면 생성 중지       
+   NOCACHE | CACHE; : NOCACHE : 디폴트로 메모리에 시퀀스 값을 미리 할당해 놓지 않으며 디폴트 값은 20, CACHE : 메모리에 시퀀스 값을 미리 할당해 놓음   
+      
+   INSERT INTO 테이블명(컬럼명) VALUES (시퀀스명.NEXTVAL); : INSERT나 SELECT 할 때마다 시퀀스 증감숫자만큼 증감  
+      
+ - 시퀀스 삭제  
+   DROP SEQUENCE 시퀀스명;  
+      
+### 🚩 파티션 테이블    
+ - 테이블을 생성할 때 파티션으로 테이블을 만들 수 있다.  
+ - 테이블에 있는 특정 컬럼 값을 기준으로 데이터를 분할해 저장해 놓는 것.  
+ - 논리적으로 테이블은 1개지만, 물리적으로는 파티션별로 데이터가 저장된다.  
+ - 대용량 테이블의 경우 데이터 조회 시 효율성과 성능을 높이기 위한 것.  
+      
+   ex) CREATE TABLE 테이블명 (    
+         컬럼1 NUMBER(6,0) NOT NULL,  
+         컬럼2 VARCHAR2(10),  
+         컬럼3 DATE DEFAULT SYSDATE NOT NULL,  
+         컬럼4 VARCHAR2(6 ),  
+         ...  
+       )  
+       PARTITION BY RANGE(컬럼4) (    
+         ...  
+         PARTITION SALES_Q1_2021 VALUES LESS THAN ('202104') TABLESPACE MYTS, --1분기   
+         PARTITION SALES_Q2_2021 VALUES LESS THAN ('202107') TABLESPACE MYTS, --2분기     
+         PARTITION SALES_Q3_2021 VALUES LESS THAN ('202110') TABLESPACE MYTS, --3분기   
+         PARTITION SALES_Q4_2021 VALUES LESS THAN ('202201') TABLESPACE MYTS, --4분기   
+         ...  
+       );  
+      
+## 🔔 SQL 문장    
+### 🚩 SELECT문  
+ - 테이블이나 뷰에 있는 데이터를 조회할 때 사용  
+ - SELECT * OR 컬럼명  
+   FROM 테이블명 OR 뷰명  
+   WHERE 조건    
+   ORDER BY 컬럼명; 
+
+### 🚩 INSERT문  
+ - 신규로 데이터 입력시 사용  
+ - INSERT INTO 테이블명 (컬럼1, 컬럼2, ...)  
+   VALUES (값1, 값2, ...)  
+ - 사원 테이블에서 월급이 5000 이상인 사원의 사원번호와 사원명을 조회한 결과를 ex3 테이블에 넣기  
+   INSERT INTO ex3 (emp_id, emp_name)  
+   SELECT employee_id, employee_name  
+   FROM employees  
+   WHERE salary > 5000;  
+      
+### 🚩 UPDATE문  
+ - UPDATE 테이블명  
+   SET 컬럼1 = 변경값1,  
+       컬럼2 = 변경값2,  
+       ...  
+   WHERE 조건;  
+ 
+### 🚩 MERGE문  
+ -  MERGE INTO 테이블명  
+    USING (update나 insert될 데이터 원천) ON (update될 조건)  
+    WHEN MATCHED THEN  
+      SET 컬럼1 =  값1, 컬럼2 = 값2, ...  
+    WHERE UPDATE 조건  
+      DELETE WHERE update_delete 조건  
+    WHEN NOT MATCHED THEN  
+      INSERT(컬럼1, 컬럼2, ...) VALUES (값1, 값2, ...)  
+      WHERE insert 조건;  
+      
+ - ex) MERGE INTO ex3 a  
+       USING (SELECT employee_id, salary, manager_id   
+              FROM employees   
+              WHERE manager_id = 146) b   
+       ON (a.employee_id = b.employee_id)  
+       WHEN MATCHED THEN  
+         UPDATE SET a.bonus_amt = b.bonus_amt + a.salary * 0.01  
+         --DELETE WHERE (b.employee_id = 161) 추가해주면 161번 사원은 삭제됨  
+       WHEN NOT MATCHED THEN  
+         INSERT (a.employee_id, b.bonus_amt) VALUES (b.employee_id, b.salary*0.01)  
+         WHERE (b.salary < 8000);  
+      
+### 🚩 DELETE문  
+ - 테이블에 있는 데이터를 삭제할 때 사용, COMMIT, ROLLBACK 가능. TRUNCATE문은 복귀 불가, WHERE 조건 붙일 수 없음  
+ - DELETE ex3;  
+ - TRUNCATE TABLE ex3;  
+                                 
+### 🚩 의사컬럼  
+ - 테이블의 컬럼처럼 동작하지만 실제로 테이블에 저장되지는 않는 컬럼  
+ - SELECT문에서는 의사컬럼 사용 가능  
+ - CONNECT_BY_ISCYCLE, CONNECT_BY_ISLEAF,LEVEL  
+ - NEXTVAL, CURRVAL  
+ - ROWNUM, ROWID  
+ - SELECT ROWNUM, employee_id  
+   FROM employees  
+   WHERE ROWNUM < 5;  
+      
+### 🚩 연산자  
+ - 수식 연산자 : +,-,*,/  
+ - 문자 연산자 : ||  
+ - 논리 연산자 : >,<,>=,<=,=,<>,!=,^=       
+ - 집합 연산자 : UNION, UNION ALL, INTERSECT, MINUS  
+ - 계층형 쿼리 연산자 : PRIOR, CONNECT_BY_ROOT      
+      
+### 🚩 표현식  
+ - 한 개 이상의 값과 연산자, SQL 함수 등이 결합된 식  
+ - CASE WHEN 조건1 THEN 값1  
+        WHEN 조건2 THEN 값2  
+        ...  
+        ELSE 기타 값  
+   END  
+ - ex) SELECT employee_id, salary,  
+              CASE WHEN salary <= 5000 THEN 'C등급'  
+                   WHEN salary > 5000 AND salary <= 15000 THEN 'B등급' ELSE 'A등급' END AS salary_grade  
+       FROM employees;  
+
+### 🚩 조건식  
+ - 비교 조건식(ANY, ALL, SOME)  
+   SELECT employee_id, salary  
+   FROM employees  
+   WHERE salary = ANY (2000, 3000, 4000) --해당 값들중 하나만 만족해도.    
+   ORDER BY employee_id;  
+                                                        
+   SLECT employee_id, salary  
+   FROM employees  
+   WHERE salary = ALL(2000, 3000, 4000) --동시에 모든 조건을 만족하면.  
+   ORDER BY employee_id;  
+                                                        
+   SELECT employee_id, salary  
+   FROM employees  
+   WHERE salary = SOME (2000, 3000, 4000) --ANY와 동일하게 사용됨.  
+   ORDER BY employee_id;  
+ 
+ - 논리 조건식(AND, OR, NOT)  
+                                                        
+                                                        
+
+
+
