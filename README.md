@@ -576,6 +576,47 @@
    ORDER BY employee_id;  
  
  - 논리 조건식(AND, OR, NOT)  
+   SELECT employee_id, salary  
+   FROM employees  
+   WHERE NOT (salary >= 2500) --거짓일 때 true 반환  
+   ORDER BY employee_id;    
+  
+ - NULL 조건식  
+   등호 연산자 사용하지 말고 salary IS NULL 혹은 salary IS NOT NULL로 비교해야 함  
+ 
+ - BETWEEN AND 조건식  
+   SELECT employee_id, salary  
+   FROM employees  
+   WHERE salary BETWEEN 2000 AND 2500 -- 급여가 2000 ~ 2500 사이    
+   ORDER BY employee_id;  
+  
+ - IN 조건식  
+   SELECT employee_id, salary  
+   FROM employees  
+   WHERE salary IN (2000, 3000, 4000) -- 급여가 2000, 3000, 4000에 포함되는 사원    
+   ORDER BY employee_id;  
+  
+   SELECT employee_id, salary  
+   FROM employees  
+   WHERE salary NOT IN (2000, 3000, 4000) -- 급여가 2000, 3000, 4000에 포함되지 않는 사원 
+   ORDER BY employee_id;  
+  
+ - EXISTS 조건식  
+   SELECT department_id, department_name  
+   FROM departments a
+   WHERE EXISTS ( SELECT *  
+                  FROM employees b  
+                  WHERE a.department_id = b.department_id -- IN과 비슷하지만 후행 조건절로 값의 리스트가 아닌 서브쿼리만 올 수 있음. 서브쿼리 내에 조인 조건이 있어야 함.    
+                  AND b.salary> 3000)  
+   ORDER BY a.department_name; 
+  
+ - LIKE 조건식  
+   SELECT emp_name  
+   FROM employees  
+   WHERE emp_name LIKE 'A%' -- A로 시작하되 나머지는 어떤 글자가 와도 상관없이 모두 조회, 대소문자 구분, %가 아닌 _은 나머지 글자 전체가 아닌 한 글자만 비교    
+   ORDER BY emp_name;  
+  
+  
                                                         
                                                         
 
