@@ -342,11 +342,7 @@
 </details>  
       
 ## 🔔 SELECT 쿼리문 실행시 순서   
-      FROM -> WHERE -> GROUP BY -> HAVING -> SELECT -> ORDER BY  
-      
-## 🔔 NVL 함수는 값이 null인 경우 지정값을 출력, NVL2 함수는 null이 아닌경우 지정값1을 출력하고, null인 경우 지정값2를 출력 한다.    
-      NVL(NAME, 'NO name')
-      NVL2(NAME, NAME, 'NO name')  
+      FROM -> WHERE -> GROUP BY -> HAVING -> SELECT -> ORDER BY   
 
 ## 🔔 데이터베이스 객체  
 ### 🚩 개요
@@ -475,7 +471,7 @@
          PARTITION SALES_Q4_2021 VALUES LESS THAN ('202201') TABLESPACE MYTS, --4분기   
          ...  
        );  
-      
+     
 ## 🔔 SQL 문장    
 ### 🚩 SELECT문  
  - 테이블이나 뷰에 있는 데이터를 조회할 때 사용  
@@ -615,6 +611,7 @@
    FROM employees  
    WHERE emp_name LIKE 'A%' -- A로 시작하되 나머지는 어떤 글자가 와도 상관없이 모두 조회, 대소문자 구분, %가 아닌 _은 나머지 글자 전체가 아닌 한 글자만 비교    
    ORDER BY emp_name;  
+  
 ## 🔔 SQL 함수  
 ### 🚩 숫자 함수  
  - ABS(n) : 절대값 반환  
