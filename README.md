@@ -615,6 +615,103 @@
    FROM employees  
    WHERE emp_name LIKE 'A%' -- A로 시작하되 나머지는 어떤 글자가 와도 상관없이 모두 조회, 대소문자 구분, %가 아닌 _은 나머지 글자 전체가 아닌 한 글자만 비교    
    ORDER BY emp_name;  
+## 🔔 SQL 함수  
+### 🚩 숫자 함수  
+ - ABS(n) : 절대값 반환  
+   SELECT ABS(10), ABS(-10), ABS(-10.123) --결과 10 10 10.123   
+   FROM DUAL;  
+ - CEIL(n) : 매개변수 n과 같거나 가장 큰 정수 반환    
+   SELECT CEIL(10.123), CEIL(10.541), CEIL(11.001) --결과 11 11 12     
+   FROM DUAL;  
+ - FLOOR(n) : 매개변수 n보다 작거나 가장 큰 정수 반환  
+   SELECT FLOOR(10.123), FLOOR(10.541), FLOOR(11.001) --결과 10 10 11    
+   FROM DUAL;  
+ - ROUND(n,i) : 매개변수 n을 소수점 기준 (i_1)번 째에서 반올림한 결과 반환, i는 생략 가능, 디폴트 값은 0  
+   SELECT ROUND(10.154), ROUND(10.541), ROUND(11.001) --결과 10 11 11    
+   FROM DUAL;  
+    
+   SELECT ROUND(10.541, 1), ROUNG(10.154, 2), ROUND(10.154, 3) --결과 10.2 10.15 10.154    
+   FROM DUAL;  
+    
+   SELECT ROUNG(0, 3), ROUND(115.155, -1), ROUND(115.155, -2) --결과 0 120 100    
+   FROM DUAL;  
+  
+ - TRUNC : 반올림 하지 않고 n1을 소수점 기준 n2 자리에서 무조건 잘라낸 결과 반환, n2 생략 가능, 디폴트 값 0  
+   SELECT TRUNC(115.155), TRUNC(115.155, 1), TRUNC(115.155, 2), TRUNC(115.155, -2) -- 결과 115 115.1 115.15 100    
+   FROM DUAL;  
+    
+ - POWER(n2, n1) : n2를 n1 제곱한 결과 반환, n2가 음수일 때 n1은 정수만 올 수 있음  
+   SELECT POWER(3,2), POWER(3,3), POWER(3,3.0001) -- 결과 9 27 27.0029664    
+   FROM DUAL;  
+    
+ - SORT : n의 제곱근 반환  
+   SELECT SORT(2), SORT(5) --결과 1.141421356   2.23606798     
+   FROM DUAL;  
+    
+ - MOD(n2, n1) : n2를 n1으로 나눈 나머지 값 반환  
+   SELECT MOD(19,4), MOD(19.123, 4.2) --결과 3  2.323    
+   FROM DUAL;  
+  
+ - EXP(n) : 지수 함수로 e(e=2.71828183...)의 n제곱 값을 반환  
+   LN(n) : 자연 로그 함수로 밑수가 e인 로그 함수  
+   LOG(n2, n1) : n2를 밑수로 하는 n1의 로그 값을 반환  
+    
+   SELECT EXP(2), LN(2.713), LOG(10, 100) --결과 7.3890561     0.998055034     2    
+   FROM DUAL;  
+  
+### 🚩 문자 함수  
+ - INITCAP(char) :  매개변수로 들어오는 char의 첫 문자는 대문자로 나머지는 소문자로 반환, 첫 문자 인식 기준은 공백과 알파벳(숫자 포함)을 제외한 문자    
+   SELECT INITCAP('never say goodbye') --결과 Never Say Goodbye    
+   FROM DUAL;  
+  
+ - LOWER : 매개변수로 들어오는 문자를 모두 소문자로.  
+   UPPER : 모두 대문자로 변환해 반환.  
+   SELECT LOWER('NEVER SAY GOODBYE'), UPPER('never say goodbye') --결과 never say goodbye    NEVER SAY GOODBYE    
+   FROM DUAL;  
+    
+ - CONCAT(char1, char2) : 매개변수로 들어오는 두 문자를 붙여 반환  
+   SELECT CONCAT('I Have', 'A Dream) --결과 I Have A Dream    
+   FROM DUAL;  
+   
+ - SUBSTR(char, pos, len) : 잘라올 대사 문자열인 char의 pos번째 문자부터 len길이만큼 잘라낸 결과 반환  
+   SELECT SUBSTR('ABCDEFG', 1, 4), SUBSTR('ABCDEFG', -1, 4) --결과 ABCD    G  
+   FROM DUAL;  
+    
+ - LTRIM(char, set) : 매개변수로 들어온 char 문자열에서 set으로 지정된 문자열을 왼쪽 끝에서 제거한 후 나머지 문자열 반환, 문자열 중간에 있다면 문자열 전체 반환    
+   RTRIM(char, set) : 오른쪽 끝에서 제거한 후 나머지 문자열 반환  
+   SELECT LTRIM('ABCDEFGABC', 'ABC'),  --결과 DEFGABC     나다라     ABCDEFG     가나다  
+          LTRIM('가나다라', '가'),  
+          RTRIM('ABCDEFGABC', 'ABC'),  
+          RTRIM('가나다라', '라')  
+   FROM DUAL;  
+    
+ - LPAD(expr1, n, expr2) : 매개변수로 들어온 expr2 문자열을 n자리만큼 왼쪽부터 채워 expr1을 반환, 매개변수 n은 expr1과 expr2가 합쳐져 반환되는 총 자릿수  
+   RPAD(expr1, n, expr2) : 오른쪽부터 채움  
+   SELECT LPAD(phone_num, 12, '(02)') --결과 (02)111-1111     (02)111-2222      ...  
+   FROM EX4_1;  
+    
+ - REPLACE(char, search_str, replace_str) : char문자열에서 search_str문자열을 찾아 replace_str문자열로 대체한 결과 반환  
+   SELECT REPLACE('나는 너를 모르는데 너는 나를 알겠는가', '나는', '너를') --결과 나는 너를 모르는데 너는 나를 알겠는가    
+   FROM DUAL;  
+    
+   SELECT REPLACE('ABC DEF', '', '') --결과 ABCDEF    
+   FROM DUAL;  
+  
+ - TRANSLATE(expr, FROM_str, to_str) : 문자열 자체가 아닌 문자 한 글자씩 매핑해 바꾼 결과 반환  
+   SELECT TRANSLATE('나는 너를 모르는데 너는 나를 알겠는가', '나는', '너를') --결과 너를 너를 모르를데 너를너를 알겠를가  
+   FROM DUAL;  
+  
+ - INSTR(str, substr, pos, occur) :  str문자열에서 substr과 일치하는 위치 반환, pos는 시작위치로 디폴트 1, occur은 몇 번째 일치하는지 명시 디폴트 1  
+   SELECT INSTR('내가 만약 외로울 때면, 내가 만약 괴로울 때면', '만약') --결과 4  
+          INSTR('내가 만약 외로울 때면, 내가 만약 괴로울 때면', '만약', 5) --결과 18  
+   FROM DUAL;
+  
+ - LENGTH(chr) : 매개변수로 들어온 문자열의 개수 반환  
+   SELECT LENGTH('대한민국') --결과 4  
+   FROM DUAL;  
+  
+### 🚩 날짜 함수  
+ - 
   
   
                                                         
