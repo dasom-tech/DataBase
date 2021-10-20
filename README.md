@@ -708,8 +708,212 @@
    FROM DUAL;  
   
 ### 🚩 날짜 함수  
- - 
+ - DATE함수나 TIMESTAMP 함수와 같은 날짜형을 대상으로 연산을 수행해 결과를 반환
+1. SYSDATE : 현재 일자와 시간을 DATE형으로 반환
+    
+    SYSTIMESTAMP : 현재 일자와 시간을 TIMESTAMP형으로 반환
+    
+    ```sql
+    SELECT SYSDATE, SYSTIMESTAMP
+    FROM DUAL;
+    -- 2021-07-26 17:06:25
+    -- 2021-07-26 17:06:25.99800000000 +09:00
+    ```
+    
+2. ADD_MONTHS(date, integer) : 매개변수로 들어온 날짜에 integer만큼의 월을 더한 날짜 반환
+    
+    ```sql
+    SELECT ADD_MONTHS(SYSDATE,1), ADD_MONTHS(SYSDATE, -1)
+    FROM DUAL;
+    -- 2021-08-26 17:06:25
+    -- 2021-06-26 17:06:25
+    ```
+    
+3. MONTHS_BETWEEN(date1, date2) : 두 날짜 사이의 개월 수 반환, date2가 date1보다 빠른 날짜가 옴
+    
+    ```sql
+    SELECT MONTHS_BETWEEN(SYSDATE, ADD_MONTHS(SYSDATE, 1)) mon1,
+    			 MONTHS_BETWEEN(ADD_MONTHS(SYSDATE, 1), SYSDATE) mon2
+    FROM DUAL;
+    -- -1      1
+    
+    --20대 고객수 구하기
+    SELECT COUNT(customer_id)
+    FROM customers
+    WHERE FLOOR(MONTHS_BETWEEN(SYSDATE, date_of_birth) / 12) BETWEEN 20 AND 29;
+    ```
+    
+4. LAST_DAY(date) : date 날짜를 기준으로 해당 월의 마지막 일자를 반환
+    
+    ```sql
+    SELECT LAST_DAY(SYSDATE)
+    FROM DUAL;
+    -- 2021-07-31 17:06:25
+    ```
+    
+5. ROUND(date, format) : 반올림한 날짜 반환
+    
+    TRUNC(date, format) : 잘라낸 날짜 반환
+    
+    ```sql
+    SELECT SYSDATE, ROUND(SYSDATE, 'month'), TRUNC(SYSDATE, 'month')
+    FROM DUAL;
+    -- 2021-07-26 17:06:25      2021-08-01 00:00:00      2021-07-01 00:00:00
+    ```
+    
+6. NEXT_DAY(date, char) : date를 char에 명시한 날짜로 다음 주 주중 일자를 반환
+    
+    ```sql
+    SELECT NEXT_DAY(SYSDATE, '금요일')
+    FROM DUAL;
+    -- 2021-07-31 17:06:25
+    ``` 
   
+### 🚩 변환 함수 
+  - 서로 다른 유형의 데이터 타입으로 변환해 결과를 반환
+1. TO_CHAR(숫자 혹은 날짜, format) : 숫자나 날짜를 문자로 변환 
+    
+     
+    
+    ```sql
+    SELECT TO_CHAR(123456789, '999,999,999')
+    FROM DUAL;
+    -- 123,456,789
+    
+    SELECT TO_CHAR(SYSDATE, 'YYYY-MM-DD')
+    FROM DUAL;
+    -- 2021-07-26
+    ```
+    
+
+2. TO_NUMBER(expr, format) : 문자나ㅏ 다른 유형의 숫자를 NUMBER형으로 변환
+
+    ```sql
+    SELECT TO_NUMBER('123456')
+    FROM DUAL;
+    -- 123456
+    ```
+
+3. TO_DATE(char, format) : 문자를 DATE형으로 변환
+    
+    TO_TIMESTAMP(char, format) : 문자를 TIMESTAMP형으로 변환
+    
+    ```sql
+    SELECT TO_DATE('20210726', 'YYYY-MM-DD')
+    FROM DUAL;
+    -- 2021/07/26 00:00:00
+    
+    SELECT TO_DATE('2021072617:36:50', 'YYYY-MM-DD HH24:MI:SS')
+    FROM DUAL;
+    -- 2021/07/26 17:36:50
+    ``` 
+  
+### 🚩 NULL 관련 함수 
+1. NVL(expr1, expr2) : expr1이 NULL일 때 expr2 반환
+    
+    ```sql
+    SELECT NVL(manager_id, employee_id)
+    FROM employees
+    WHERE manager_id IS NULL;
+    -- 100
+    ```
+    
+2. NVL2(expr1, expr2, expr3) : expr1이 NULL이 아니면 expr2를 NULL이면 expr3을 반환 
+    
+    ```sql
+    SELECT employee_id,
+    			 NVL2(commission_pct, salary + (salary * commission_pct), salary)AS salary2
+    FROM employees;
+    -- EMPLOYEE_ID      SALARY2
+    --         198         2600
+    --         199         2600
+    --         200         4400
+    -- ...
+    -- 107개의 행이 선택됨.
+    ```
+    
+3. COALESCE(expr1, expr2, ...) : 매개변수로 들어오는 표현식에서 NULL이 아닌 첫 번째 표현식을 반환. NULL과 수식 연산자를 사용해 NULL과 연산을 하면 상대값이 무엇이든 무조건 NULL이 반환됨.
+    
+    ```sql
+    SELECT employee_id, salary, commission_pct,
+    			 COALESCE(salary * commission_pct, salary)AS salary2
+    FROM employees;
+    -- EMPLOYEE_ID       SALARY       COMMISSION_PCT       SALARY2
+    --         143         2600                               2600
+    --         144         2500                               2500
+    --         145        14000                  0.4          5600
+    --         146        13500                  0.3          4050
+    -- ...
+    -- 107개의 행이 선택됨.
+    ```
+    
+4. LNNVL(조건식) : 매개변수로 들어오는 조건식의 결과가 FALSE나 UNKNOWN이면 TRUE, TRUE이면 FALSE 반환
+    
+    ```sql
+    SELECT COUNT(*)
+    FROM employees
+    WHERE NVL(commission_pct, 0) < 0.2;
+    -- 83
+    
+    SELECT COUNT(*)
+    FROM employees
+    WHERE LNNVL(commission_pct >= 0.2);
+    -- 83
+    ```
+    
+5. NULLIF(expr1, expr2) : expr1과 expr2를 비교해 같으면 NULL, 같지 않으면 expr1 반환
+    
+    ```sql
+    SELECT employee_id,
+    			 TO_CHAR(start_date, 'YYYY') start_year,
+    			 TO_CHAR(end_date, 'YYYY') end_year,
+    			 NULL_IF(TO_CHAR(end_date, 'YYYY'), TO_CHAR(start_date, 'YYYY')) nullif_year
+    FROM job_history;
+    -- EMPLOYEE_ID    START_YEAR     END_YEAR NULLIF_YEAR
+    --     1022001          2006                     2006
+    --     1011997          2001                     2001
+    --     1222007          2007                     
+    --     2001995          2001                     2001
+    -- ...
+    -- 10개의 행이 선택됨.
+    -- start_date와 end_date의 연도만 추출해 두 연도가 같으면 NULL, 아니면 종료년도 출력
+    ``` 
+  
+### 🚩 기타 함수 
+1. GREATEST(expr1, expr2, ...) : 매개변수로 들어오는 표현식에서 가장 큰 값을 반환
+    
+    LEAST(expr1, expr2, ...) : 가장 작은 값을 반환
+    
+    ```sql
+    SELECT GREATEST(1, 2, 3, 2),
+    			 LEAST(1, 2, 3, 2)
+    FROM DUAL;
+    -- 3      1
+    
+    SELECT GREATEST('이순신', '강감찬', '세종대왕'),
+    		   LEAST('이순신', '강감찬', '세종대왕')
+    FROM DUAL;
+    -- 이순신      강감찬
+    ```
+    
+2. DECODE(expr, search1, result1, search2, result2, ..., default) : expr과 search1을 비교해 두 값이 같으면  result1을, 같지 않으면 다시 search2와 비교해 값이 같으면 result2를 반환하고 계속 한 뒤 최종적으로 같은 값이 없으면 default 값을 반환. DECODE 보다는 CASE 표현식을 사용하는 것이 코드가 깔끔해짐.
+    
+    ```sql
+    SELECT prod_id
+    			 DECODE(channel_id, 3, 'Direct',
+    													9, 'Direct',
+    												  5, 'Indirect',
+    													4, 'Indirect',
+    														 'Others') decodes
+    FROM sales
+    WHERE ROWNUM < 10;
+    -- PROD_ID   DECODES
+    --      18   Others
+    --      18   Indirect
+    --      18   Indirect
+    --      18   Others
+    -- 9개의 행이 선택됨.
+    ```
   
                                                         
                                                         
