@@ -343,8 +343,9 @@
       
 ## 🔔 SELECT 쿼리문 실행시 순서   
       FROM -> WHERE -> GROUP BY -> HAVING -> SELECT -> ORDER BY   
+<details>
+  <summary>🔔 데이터베이스 객체 </summary>
 
-## 🔔 데이터베이스 객체  
 ### 🚩 개요
  - 테이블 : 데이터를 담고 있는 개체
  - 뷰 : 하나 이상의 테이블을 연결해 마치 테이블인 것처럼 사용하는 객체
@@ -470,8 +471,11 @@
          PARTITION SALES_Q3_2021 VALUES LESS THAN ('202110') TABLESPACE MYTS, --3분기   
          PARTITION SALES_Q4_2021 VALUES LESS THAN ('202201') TABLESPACE MYTS, --4분기   
          ...  
-       );  
-     
+       ); 
+</details>  
+<details>
+  <summary>🔔 SQL 문장 </summary>
+ 
 ## 🔔 SQL 문장    
 ### 🚩 SELECT문  
  - 테이블이나 뷰에 있는 데이터를 조회할 때 사용  
@@ -611,8 +615,10 @@
    FROM employees  
    WHERE emp_name LIKE 'A%' -- A로 시작하되 나머지는 어떤 글자가 와도 상관없이 모두 조회, 대소문자 구분, %가 아닌 _은 나머지 글자 전체가 아닌 한 글자만 비교    
    ORDER BY emp_name;  
+</details>
+<details>
+  <summary>🔔 SQL 함수</summary> 
   
-## 🔔 SQL 함수  
 ### 🚩 숫자 함수  
  - ABS(n) : 절대값 반환  
    SELECT ABS(10), ABS(-10), ABS(-10.123) --결과 10 10 10.123   
@@ -913,8 +919,44 @@
     --      18   Indirect
     --      18   Others
     -- 9개의 행이 선택됨.
-    ```
+    ``` 
+ </details> 
   
+ ## 🔔 Mybatis에서 CDATA 사용하기!!!   
+    
+    <if test='depCd != null and depCd != "" '>
+        AND depCd <![CDATA[ >= ]]> #{depCd }
+    </if>
+    
+    - 쿼리문에 문자열 비교 연산자나 부등호 처리를 할 때 <와 같은 기호가 괄호인지 비교연산자인지 확인이 안되고 특수문자 사용에도 
+      제한이 있어서 사용함. CDATA 태그 안에서는 전부 문자열로 치환시켜버림. 
+                                      
+ ## 🔔 statementType="CALLABLE" 
+ - CRUD 쿼리는 PREPARED나 STATEMENT를 사용하지만 FUNCTION이나 PROCEDURE 사용시에는 CALLABLE 사용
+  ```sql
+  <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybalis-3-mapper.dtd">
+  <mapper namespace="testMapper" >
+
+    <select id="getValues" parameterType="paramVO" returnType="paramVO" statementType="CALLABLE">
+        { call testProc(
+                    #{inParam01, mode=IN, jdbcType=VARCHAR}
+                  , #{inParam02, mode=IN, jdbcType=VARCHAR}
+                  , #{outParam01, mode=OUT, jdbcType=VARCHAR}
+                  , #{outParam01, mode=OUT, jdbcType=VARCHAR}
+                  , #{outParam01, mode=OUT, jdbcType=VARCHAR})
+        }
+    </select>
+  </mapper>
+  ```   
+
+  ```sql
+  paramVO vo = new paramVO();
+  vo.setInParam01("value1");
+  vo.setInParam02("value2");
+  testService.getValues(vo);
+
+  System.out.print("First return value : " + vo.getOutParam01());
+  ```                                     
                                                         
                                                         
 
